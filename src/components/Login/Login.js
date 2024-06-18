@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import Card from "../UI/Card/Card";
 import Button from "../UI/Button/Button";
@@ -32,6 +33,10 @@ function reducer(state, action) {
 
 function Login() {
   const { onLogin } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
 
   const [formIsValid, setFormIsValid] = useState(false);
 
@@ -68,7 +73,9 @@ function Login() {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    onLogin(state.email, state.password);
+    onLogin(state.email, () => {
+      navigate(from, { replace: true });
+    });
   };
 
   return (

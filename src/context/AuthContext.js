@@ -26,7 +26,7 @@ export function AuthContextProvider(props) {
     return await response.json();
   };
 
-  const loginHandler = async (email) => {
+  const loginHandler = async (email, callback) => {
     try {
       const user = await fetchUser(email);
       const userId = Object.keys(user)[0];
@@ -34,6 +34,7 @@ export function AuthContextProvider(props) {
       localStorage.setItem("isLoggedIn", "1");
       localStorage.setItem("userId", userId);
       setIsLoggedIn(true);
+      return callback();
     } catch (error) {
       console.log("Error:", error.message);
     }
