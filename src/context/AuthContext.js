@@ -17,13 +17,31 @@ export function AuthContextProvider(props) {
     }
   }, []);
 
-  const loginHandler = () => {
-    localStorage.setItem("isLoggedIn", "1");
-    setIsLoggedIn(true);
+  const fetchUser = async (email) => {
+    const url = `${process.env.REACT_APP_BASE_URL}users.json?orderBy="email"&equalTo="${email}"`;
+    const response = await fetch(url);
+
+    if (!response.ok) throw new Error("Algo salió mal");
+
+    return await response.json();
+  };
+
+  const loginHandler = async (email) => {
+    try {
+      const user = await fetchUser(email);
+      const userId = Object.keys(user)[0];
+      if (!userId) throw new Error("Correo inválido");
+      localStorage.setItem("isLoggedIn", "1");
+      localStorage.setItem("userId", userId);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
   };
 
   const logoutHandler = () => {
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userId");
     setIsLoggedIn(false);
   };
 
